@@ -76,19 +76,19 @@ Ingests telemetry data from Edge Agents. Accepts an array of telemetry objects.
 
 **Telemetry Fields:**
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `tenantId` | string | Organization identifier |
-| `siteId` | string | Site/location identifier |
-| `cameraId` | string | Camera identifier |
-| `zoneId` | string | Zone identifier |
-| `timestamp` | ISO 8601 | Time of measurement |
-| `density` | float (0-1) | Crowd density ratio |
-| `avgSpeed` | float | Average movement speed |
-| `speedVariance` | float | Speed variance |
-| `flowEntropy` | float (0-1) | Movement disorder |
-| `alignment` | float (0-1) | Movement alignment |
-| `bottleneckIndex` | float (0-1) | Congestion indicator |
+| Field             | Type        | Description              |
+| ----------------- | ----------- | ------------------------ |
+| `tenantId`        | string      | Organization identifier  |
+| `siteId`          | string      | Site/location identifier |
+| `cameraId`        | string      | Camera identifier        |
+| `zoneId`          | string      | Zone identifier          |
+| `timestamp`       | ISO 8601    | Time of measurement      |
+| `density`         | float (0-1) | Crowd density ratio      |
+| `avgSpeed`        | float       | Average movement speed   |
+| `speedVariance`   | float       | Speed variance           |
+| `flowEntropy`     | float (0-1) | Movement disorder        |
+| `alignment`       | float (0-1) | Movement alignment       |
+| `bottleneckIndex` | float (0-1) | Congestion indicator     |
 
 ---
 
@@ -100,9 +100,9 @@ Returns the current risk status of a specific zone.
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `zoneId` | string | Zone identifier |
+| Parameter | Type   | Description     |
+| --------- | ------ | --------------- |
+| `zoneId`  | string | Zone identifier |
 
 **Response:** `200 OK`
 
@@ -119,12 +119,12 @@ Returns the current risk status of a specific zone.
 
 **Risk Levels:**
 
-| Level | Score Range | Description |
-|-------|-------------|-------------|
-| `Green` | 0.0 - 0.39 | Normal conditions |
-| `Yellow` | 0.4 - 0.69 | Elevated risk |
-| `Orange` | 0.7 - 0.89 | High risk |
-| `Red` | 0.9 - 1.0 | Critical risk |
+| Level    | Score Range | Description       |
+| -------- | ----------- | ----------------- |
+| `Green`  | 0.0 - 0.39  | Normal conditions |
+| `Yellow` | 0.4 - 0.69  | Elevated risk     |
+| `Orange` | 0.7 - 0.89  | High risk         |
+| `Red`    | 0.9 - 1.0   | Critical risk     |
 
 ---
 
@@ -134,10 +134,10 @@ Returns recent risk events for a site.
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `siteId` | string | Site identifier |
-| `limit` | int (query) | Max results (default: 50) |
+| Parameter | Type        | Description               |
+| --------- | ----------- | ------------------------- |
+| `siteId`  | string      | Site identifier           |
+| `limit`   | int (query) | Max results (default: 50) |
 
 **Response:** `200 OK`
 
@@ -151,10 +151,7 @@ Returns recent risk events for a site.
       "riskLevel": "Orange",
       "createdAt": "2024-01-30T10:00:00Z",
       "acknowledged": false,
-      "suggestedActions": [
-        "Consider crowd management",
-        "Monitor zone closely"
-      ]
+      "suggestedActions": ["Consider crowd management", "Monitor zone closely"]
     }
   ],
   "total": 1
@@ -169,8 +166,8 @@ Acknowledges a risk event.
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
+| Parameter | Type | Description      |
+| --------- | ---- | ---------------- |
 | `eventId` | GUID | Event identifier |
 
 **Request Body:**
@@ -280,8 +277,8 @@ All endpoints return standard error responses:
 
 **Common Status Codes:**
 
-| Code | Description |
-|------|-------------|
-| `400` | Bad Request - Invalid input |
+| Code  | Description                        |
+| ----- | ---------------------------------- |
+| `400` | Bad Request - Invalid input        |
 | `404` | Not Found - Resource doesn't exist |
-| `500` | Internal Server Error |
+| `500` | Internal Server Error              |

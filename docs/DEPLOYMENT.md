@@ -12,10 +12,10 @@ This guide covers deploying SwarmGrid using Docker Compose for development and p
 
 ### Hardware Recommendations
 
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| **Edge Device** | x64 CPU, 4GB RAM | x64 CPU (AVX2), 8GB RAM, NVIDIA GPU |
-| **Backend Server** | 2 vCPU, 4GB RAM | 4 vCPU, 8GB RAM |
+| Component          | Minimum          | Recommended                         |
+| ------------------ | ---------------- | ----------------------------------- |
+| **Edge Device**    | x64 CPU, 4GB RAM | x64 CPU (AVX2), 8GB RAM, NVIDIA GPU |
+| **Backend Server** | 2 vCPU, 4GB RAM  | 4 vCPU, 8GB RAM                     |
 
 ## Quick Start
 
@@ -73,15 +73,15 @@ docker-compose logs -f
 
 ## Service URLs
 
-| Service | URL | Default Credentials |
-|---------|-----|---------------------|
-| Dashboard | http://localhost:3002 | - |
-| API | http://localhost:5000 | - |
-| Edge Stream | http://localhost:8000/stream | - |
-| Grafana | http://localhost:3001 | admin / swarmgrid |
-| Prometheus | http://localhost:9090 | - |
-| PostgreSQL | localhost:5432 | swarmgrid / swarmgrid |
-| Redis | localhost:6379 | - |
+| Service     | URL                          | Default Credentials   |
+| ----------- | ---------------------------- | --------------------- |
+| Dashboard   | http://localhost:3002        | -                     |
+| API         | http://localhost:5000        | -                     |
+| Edge Stream | http://localhost:8000/stream | -                     |
+| Grafana     | http://localhost:3001        | admin / swarmgrid     |
+| Prometheus  | http://localhost:9090        | -                     |
+| PostgreSQL  | localhost:5432               | swarmgrid / swarmgrid |
+| Redis       | localhost:6379               | -                     |
 
 ## Service Management
 
@@ -126,11 +126,13 @@ docker-compose up -d
 ### Camera Connection Failed
 
 1. **Verify RTSP URL works:**
+
    ```bash
    vlc rtsp://user:pass@camera-ip:554/stream
    ```
 
 2. **Check network connectivity:**
+
    ```bash
    ping camera-ip
    ```
@@ -143,11 +145,13 @@ docker-compose up -d
 ### Database Connection Issues
 
 1. **Wait for PostgreSQL health check:**
+
    ```bash
    docker-compose ps  # Check "healthy" status
    ```
 
 2. **View database logs:**
+
    ```bash
    docker-compose logs -f postgres
    ```
@@ -160,6 +164,7 @@ docker-compose up -d
 ### Dashboard Not Loading
 
 1. **Check Core Backend is running:**
+
    ```bash
    curl http://localhost:5000/health
    ```
@@ -190,6 +195,7 @@ services:
 ```
 
 2. Start the new agent:
+
 ```bash
 docker-compose up -d edge-agent-2
 ```
@@ -208,25 +214,25 @@ For production environments, consider:
 
 ### Edge Agent
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `RTSP_URL` | Camera stream URL | Yes |
-| `BACKEND_URL` | Core Backend API URL | Yes |
-| `CAMERA_ID` | Unique camera identifier | Yes |
-| `ZONE_ID` | Zone identifier | Yes |
-| `LOG_LEVEL` | Logging verbosity | No |
+| Variable      | Description              | Required |
+| ------------- | ------------------------ | -------- |
+| `RTSP_URL`    | Camera stream URL        | Yes      |
+| `BACKEND_URL` | Core Backend API URL     | Yes      |
+| `CAMERA_ID`   | Unique camera identifier | Yes      |
+| `ZONE_ID`     | Zone identifier          | Yes      |
+| `LOG_LEVEL`   | Logging verbosity        | No       |
 
 ### Core Backend
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `ConnectionStrings__PostgreSQL` | Database connection | Yes |
-| `ConnectionStrings__Redis` | Redis connection | Yes |
-| `ASPNETCORE_ENVIRONMENT` | Runtime mode | No |
+| Variable                        | Description         | Required |
+| ------------------------------- | ------------------- | -------- |
+| `ConnectionStrings__PostgreSQL` | Database connection | Yes      |
+| `ConnectionStrings__Redis`      | Redis connection    | Yes      |
+| `ASPNETCORE_ENVIRONMENT`        | Runtime mode        | No       |
 
 ### Dashboard
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `NEXT_PUBLIC_API_URL` | Core Backend URL | Yes |
-| `NEXT_PUBLIC_EDGE_AGENT_URL` | Edge Agent stream URL | No |
+| Variable                     | Description           | Required |
+| ---------------------------- | --------------------- | -------- |
+| `NEXT_PUBLIC_API_URL`        | Core Backend URL      | Yes      |
+| `NEXT_PUBLIC_EDGE_AGENT_URL` | Edge Agent stream URL | No       |

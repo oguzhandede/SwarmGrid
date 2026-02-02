@@ -68,6 +68,7 @@ SwarmGrid follows a hybrid edge-cloud architecture designed for privacy and low-
 Runs on devices with access to RTSP cameras.
 
 **Responsibilities:**
+
 - Connect to RTSP streams with automatic reconnection
 - Decode video frames
 - Detect persons using YOLOv8
@@ -76,6 +77,7 @@ Runs on devices with access to RTSP cameras.
 - Serve local MJPEG stream for operators
 
 **Key Libraries:**
+
 - OpenCV for video processing
 - Ultralytics YOLOv8 for detection
 - FastAPI for local HTTP API
@@ -85,6 +87,7 @@ Runs on devices with access to RTSP cameras.
 The central risk engine, deployable on-premises or in the cloud.
 
 **Responsibilities:**
+
 - Receive telemetry via HTTP API
 - Calculate risk scores using configurable algorithms
 - Manage state and trends with Redis
@@ -92,6 +95,7 @@ The central risk engine, deployable on-premises or in the cloud.
 - Broadcast real-time updates via SignalR
 
 **Architecture:**
+
 - Clean Architecture with domain-driven design
 - CQRS pattern for read/write separation
 - Repository pattern for data access
@@ -101,6 +105,7 @@ The central risk engine, deployable on-premises or in the cloud.
 The operator interface for situational awareness.
 
 **Responsibilities:**
+
 - Visualize risk via heatmaps and timelines
 - Display alerts with suggested actions
 - Manage zones and video sources
@@ -127,14 +132,14 @@ Tenant (Organization)
 
 ## Technology Stack
 
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| Edge Agent | Python 3.11+ | Computer vision, feature extraction |
-| Core Backend | .NET 8 | API, risk engine, real-time hub |
-| Dashboard | Next.js 14 | Operator interface |
-| Database | TimescaleDB | Time-series storage |
-| Cache | Redis | State management, trends |
-| Metrics | Prometheus + Grafana | Observability |
+| Component    | Technology           | Purpose                             |
+| ------------ | -------------------- | ----------------------------------- |
+| Edge Agent   | Python 3.11+         | Computer vision, feature extraction |
+| Core Backend | .NET 8               | API, risk engine, real-time hub     |
+| Dashboard    | Next.js 14           | Operator interface                  |
+| Database     | TimescaleDB          | Time-series storage                 |
+| Cache        | Redis                | State management, trends            |
+| Metrics      | Prometheus + Grafana | Observability                       |
 
 ## Security Considerations
 

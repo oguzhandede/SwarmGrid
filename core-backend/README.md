@@ -42,11 +42,11 @@ dotnet run --project src/SwarmGrid.Api
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `ConnectionStrings__PostgreSQL` | PostgreSQL connection string | - |
-| `ConnectionStrings__Redis` | Redis connection string | `localhost:6379` |
-| `ASPNETCORE_ENVIRONMENT` | Runtime environment | `Development` |
+| Variable                        | Description                  | Default          |
+| ------------------------------- | ---------------------------- | ---------------- |
+| `ConnectionStrings__PostgreSQL` | PostgreSQL connection string | -                |
+| `ConnectionStrings__Redis`      | Redis connection string      | `localhost:6379` |
+| `ASPNETCORE_ENVIRONMENT`        | Runtime environment          | `Development`    |
 
 ### appsettings.json
 
@@ -61,13 +61,13 @@ dotnet run --project src/SwarmGrid.Api
 
 ## API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/health` | GET | Health check |
-| `/api/telemetry/ingest` | POST | Ingest telemetry from Edge Agents |
-| `/api/risk/current/{zoneId}` | GET | Current risk for a zone |
-| `/api/risk/events/{siteId}` | GET | Recent risk events |
-| `/hubs/risk` | WebSocket | SignalR hub for real-time updates |
+| Endpoint                     | Method    | Description                       |
+| ---------------------------- | --------- | --------------------------------- |
+| `/health`                    | GET       | Health check                      |
+| `/api/telemetry/ingest`      | POST      | Ingest telemetry from Edge Agents |
+| `/api/risk/current/{zoneId}` | GET       | Current risk for a zone           |
+| `/api/risk/events/{siteId}`  | GET       | Recent risk events                |
+| `/hubs/risk`                 | WebSocket | SignalR hub for real-time updates |
 
 See [API Documentation](../docs/API.md) for full reference.
 

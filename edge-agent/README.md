@@ -73,21 +73,21 @@ api:
 
 Environment variables override config file values:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `RTSP_URL` | Camera stream URL | - |
-| `BACKEND_URL` | Core Backend API URL | `http://localhost:5000` |
-| `CAMERA_ID` | Unique camera identifier | `cam-01` |
-| `ZONE_ID` | Zone identifier | `zone-01` |
-| `LOG_LEVEL` | Logging level | `INFO` |
+| Variable      | Description              | Default                 |
+| ------------- | ------------------------ | ----------------------- |
+| `RTSP_URL`    | Camera stream URL        | -                       |
+| `BACKEND_URL` | Core Backend API URL     | `http://localhost:5000` |
+| `CAMERA_ID`   | Unique camera identifier | `cam-01`                |
+| `ZONE_ID`     | Zone identifier          | `zone-01`               |
+| `LOG_LEVEL`   | Logging level            | `INFO`                  |
 
 ## API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/health` | GET | Health check |
-| `/stream` | GET | MJPEG video stream |
-| `/stream/snapshot` | GET | Single JPEG frame |
+| Endpoint           | Method | Description        |
+| ------------------ | ------ | ------------------ |
+| `/health`          | GET    | Health check       |
+| `/stream`          | GET    | MJPEG video stream |
+| `/stream/snapshot` | GET    | Single JPEG frame  |
 
 Default port: `8000`
 

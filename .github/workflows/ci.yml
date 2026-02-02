@@ -1,113 +1,113 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
 
 jobs:
-  # Edge Agent (Python)
-  edge-agent:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: edge-agent
+    # Edge Agent (Python)
+    edge-agent:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: edge-agent
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.11"
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
 
-      - name: Run linting
-        run: |
-          pip install flake8
-          flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
+            - name: Run linting
+              run: |
+                  pip install flake8
+                  flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
 
-      - name: Run tests
-        run: pytest tests/ -v --tb=short || true
+            - name: Run tests
+              run: pytest tests/ -v --tb=short || true
 
-  # Core Backend (.NET)
-  core-backend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: core-backend
+    # Core Backend (.NET)
+    core-backend:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: core-backend
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "8.0.x"
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v4
+              with:
+                  dotnet-version: "8.0.x"
 
-      - name: Restore dependencies
-        run: dotnet restore
+            - name: Restore dependencies
+              run: dotnet restore
 
-      - name: Build
-        run: dotnet build --no-restore
+            - name: Build
+              run: dotnet build --no-restore
 
-      - name: Run tests
-        run: dotnet test --no-build --verbosity normal || true
+            - name: Run tests
+              run: dotnet test --no-build --verbosity normal || true
 
-  # Dashboard (Next.js)
-  dashboard:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: dashboard
+    # Dashboard (Next.js)
+    dashboard:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: dashboard
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: dashboard/package-lock.json
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+                  cache-dependency-path: dashboard/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
+            - name: Install dependencies
+              run: npm ci
 
-      - name: Run linting
-        run: npm run lint || true
+            - name: Run linting
+              run: npm run lint || true
 
-      - name: Build
-        run: npm run build
+            - name: Build
+              run: npm run build
 
-  # Docker Build Test
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    # Docker Build Test
+    docker:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
 
-      - name: Build Edge Agent
-        uses: docker/build-push-action@v5
-        with:
-          context: ./edge-agent
-          push: false
+            - name: Build Edge Agent
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./edge-agent
+                  push: false
 
-      - name: Build Core Backend
-        uses: docker/build-push-action@v5
-        with:
-          context: ./core-backend
-          push: false
+            - name: Build Core Backend
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./core-backend
+                  push: false
 
-      - name: Build Dashboard
-        uses: docker/build-push-action@v5
-        with:
-          context: ./dashboard
-          push: false
+            - name: Build Dashboard
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./dashboard
+                  push: false

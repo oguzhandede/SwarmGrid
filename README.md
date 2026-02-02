@@ -87,24 +87,24 @@ docker-compose up -d
 
 ### Access Points
 
-| Service | URL | Description |
-|---------|-----|-------------|
-| Dashboard | http://localhost:3002 | Main monitoring interface |
-| API | http://localhost:5000 | REST API + SignalR hub |
-| Edge Stream | http://localhost:8000/stream | Live MJPEG stream |
-| Grafana | http://localhost:3001 | Metrics dashboards |
-| Prometheus | http://localhost:9090 | Metrics collection |
+| Service     | URL                          | Description               |
+| ----------- | ---------------------------- | ------------------------- |
+| Dashboard   | http://localhost:3002        | Main monitoring interface |
+| API         | http://localhost:5000        | REST API + SignalR hub    |
+| Edge Stream | http://localhost:8000/stream | Live MJPEG stream         |
+| Grafana     | http://localhost:3001        | Metrics dashboards        |
+| Prometheus  | http://localhost:9090        | Metrics collection        |
 
 ## 📖 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [Architecture](docs/ARCHITECTURE.md) | System design and data flow |
-| [Deployment](docs/DEPLOYMENT.md) | Installation and configuration |
-| [API Reference](docs/API.md) | REST endpoints and SignalR hub |
-| [Edge Agent](edge-agent/README.md) | Camera integration and feature extraction |
-| [Core Backend](core-backend/README.md) | Risk engine and persistence |
-| [Dashboard](dashboard/README.md) | Web interface |
+| Document                               | Description                               |
+| -------------------------------------- | ----------------------------------------- |
+| [Architecture](docs/ARCHITECTURE.md)   | System design and data flow               |
+| [Deployment](docs/DEPLOYMENT.md)       | Installation and configuration            |
+| [API Reference](docs/API.md)           | REST endpoints and SignalR hub            |
+| [Edge Agent](edge-agent/README.md)     | Camera integration and feature extraction |
+| [Core Backend](core-backend/README.md) | Risk engine and persistence               |
+| [Dashboard](dashboard/README.md)       | Web interface                             |
 
 ## ⚙️ Configuration
 
