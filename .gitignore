@@ -1,0 +1,92 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+ENV/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+
+# IDE
+.idea/
+*.swp
+*.swo
+.vscode/
+*.code-workspace
+
+# Testing
+coverage/
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Production
+build/
+.next/
+out/
+
+# Environment (IMPORTANT: never commit credentials)
+.env
+.env.local
+.env.*.local
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Docker
+docker-compose.override.yml
+
+# Video files (large binary files)
+*.mp4
+*.avi
+*.mkv
+*.mov
+*.wmv
+recordings/
+
+# SwarmGrid runtime data
+telemetry_data/
+uploads/
+
+# Sensitive configuration (use .example versions)
+edge-agent/config/device.json
+edge-agent/config/settings.yaml.bak
+
+# ML Models (download during deployment)
+*.pt
+*.onnx
+*.pth
+*.h5
+*.tflite

@@ -1,0 +1,65 @@
+# Edge Agent config - iPhone Camera via MediaMTX RTSP proxy
+# Using MediaMTX to convert HLS stream to RTSP
+
+# For webcam: use device index (0, 1, 2...)
+# For RTSP via MediaMTX: rtsp://host.docker.internal:8555/iphone_cam
+# Note: First publish HLS to MediaMTX or use direct HLS source proxy
+rtsp_url: "rtsp://host.docker.internal:8555/iphone_cam"
+backend_url: "http://core-backend:5000"
+
+# Camera identification
+tenant_id: "demo"
+site_id: "site-01"
+camera_id: "iphone_cam"
+zone_id: "zone-01"
+
+# Processing settings
+fps: 15  # Higher FPS for smooth streaming
+frame_width: 640
+frame_height: 480
+
+# Feature extraction
+optical_flow:
+  method: "farneback"
+  pyr_scale: 0.5
+  levels: 3
+  winsize: 15
+  iterations: 3
+  poly_n: 5
+  poly_sigma: 1.2
+
+# Telemetry
+telemetry:
+  send_interval_seconds: 2
+  batch_size: 3
+  retry_attempts: 3
+  timeout_seconds: 10
+
+# API server
+api:
+  host: "0.0.0.0"
+  port: 8000
+
+# Logging
+logging:
+  level: "DEBUG"
+  format: "text"
+
+# Zone synchronization with backend
+zone_sync:
+  enabled: true
+  sync_interval_seconds: 60
+  retry_attempts: 3
+  timeout_seconds: 10
+
+# Device provisioning (registration with backend)
+device_provisioning:
+  enabled: true
+  heartbeat_interval_seconds: 60
+  device_store_path: "config/device.json"
+
+# OTA Update settings
+update:
+  enabled: true
+  check_interval_seconds: 3600  # 1 hour
+  auto_apply: false  # Require manual approval

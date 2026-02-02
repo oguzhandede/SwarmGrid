@@ -1,0 +1,9 @@
+{
+    "name": "SwarmGrid Dashboard",
+    "short_name": "SwarmGrid",
+    "description": "Real-time crowd risk monitoring dashboard",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0a0a0a",
+    "theme_color": "#10b981"
+}
