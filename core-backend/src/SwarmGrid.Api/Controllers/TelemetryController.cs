@@ -19,19 +19,20 @@ public class TelemetryController : ControllerBase
     private readonly IHubContext<RiskHub> _hubContext;
     private readonly SwarmGridDbContext _dbContext;
     private readonly ILogger<TelemetryController> _logger;
-    
+
     public TelemetryController(
         RiskEngineV1 riskEngine,
         IHubContext<RiskHub> hubContext,
         SwarmGridDbContext dbContext,
-        ILogger<TelemetryController> logger)
+        ILogger<TelemetryController> logger
+    )
     {
         _riskEngine = riskEngine;
         _hubContext = hubContext;
         _dbContext = dbContext;
         _logger = logger;
     }
-    
+
     /// <summary>
     /// Ingest telemetry data from Edge Agent.
     /// </summary>
@@ -40,20 +41,21 @@ public class TelemetryController : ControllerBase
     {
         if (telemetryBatch == null || telemetryBatch.Count == 0)
             return BadRequest("Empty telemetry batch");
-        
+
         try
         {
             var riskEventDtos = new List<RiskEventDto>();
             var telemetriesToPersist = new List<Telemetry>();
             var riskEventsToStore = new List<RiskEvent>();
-            
+
             foreach (var dto in telemetryBatch)
             {
                 // Normalize timestamp to UTC for PostgreSQL compatibility
-                var timestamp = dto.Timestamp.Kind == DateTimeKind.Unspecified
-                    ? DateTime.SpecifyKind(dto.Timestamp, DateTimeKind.Utc)
-                    : dto.Timestamp.ToUniversalTime();
-                    
+                var timestamp =
+                    dto.Timestamp.Kind == DateTimeKind.Unspecified
+                        ? DateTime.SpecifyKind(dto.Timestamp, DateTimeKind.Utc)
+                        : dto.Timestamp.ToUniversalTime();
+
                 var telemetry = new Telemetry
                 {
                     TenantId = dto.TenantId,
@@ -66,15 +68,16 @@ public class TelemetryController : ControllerBase
                     SpeedVariance = dto.SpeedVariance,
                     FlowEntropy = dto.FlowEntropy,
                     Alignment = dto.Alignment,
-                    BottleneckIndex = dto.BottleneckIndex
+                    BottleneckIndex = dto.BottleneckIndex,
+                    PersonCount = dto.PersonCount,
                 };
-                
+
                 telemetriesToPersist.Add(telemetry);
-                
+
                 // Calculate risk (uses Redis for trend analysis)
                 var riskEvent = await _riskEngine.CalculateRiskAsync(telemetry);
                 riskEventsToStore.Add(riskEvent);
-                
+
                 var riskEventDto = new RiskEventDto(
                     riskEvent.Id,
                     riskEvent.TenantId,
@@ -85,11 +88,13 @@ public class TelemetryController : ControllerBase
                     riskEvent.RiskScore,
                     riskEvent.RiskLevel,
                     riskEvent.SuggestedActions,
-                    riskEvent.Acknowledged
+                    riskEvent.Acknowledged,
+                    dto.Density,
+                    dto.PersonCount
                 );
-                
+
                 riskEventDtos.Add(riskEventDto);
-                
+
                 // Log significant events
                 if (riskEvent.RiskLevel >= Domain.Enums.RiskLevel.Yellow)
                 {
@@ -97,34 +102,37 @@ public class TelemetryController : ControllerBase
                         "Risk alert: {Zone} - {Level} ({Score:P0})",
                         riskEvent.ZoneId,
                         riskEvent.RiskLevel,
-                        riskEvent.RiskScore);
+                        riskEvent.RiskScore
+                    );
                 }
             }
-            
+
             // Add all entities and save atomically (single transaction)
             await _dbContext.Telemetries.AddRangeAsync(telemetriesToPersist);
             await _dbContext.RiskEvents.AddRangeAsync(riskEventsToStore);
             await _dbContext.SaveChangesAsync();
-            
+
             // Push via SignalR after successful save
             foreach (var riskEventDto in riskEventDtos)
             {
                 await _hubContext.SendRiskUpdate(riskEventDto);
             }
-            
+
             _logger.LogInformation(
                 "Ingested {Count} telemetry records, generated {RiskCount} risk events",
                 telemetryBatch.Count,
-                riskEventDtos.Count);
-            
+                riskEventDtos.Count
+            );
+
             return Ok(new { processed = telemetryBatch.Count, riskEvents = riskEventDtos });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to ingest telemetry batch");
-            return StatusCode(500, new { error = "Failed to process telemetry batch", details = ex.Message });
+            return StatusCode(
+                500,
+                new { error = "Failed to process telemetry batch", details = ex.Message }
+            );
         }
     }
 }
-
-

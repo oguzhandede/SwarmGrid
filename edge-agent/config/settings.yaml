@@ -1,16 +1,16 @@
-# Edge Agent config - iPhone Camera via MediaMTX RTSP proxy
-# Using MediaMTX to convert HLS stream to RTSP
+# Edge Agent config - Test Video Stream
+# Using MediaMTX as RTSP relay server
 
 # For webcam: use device index (0, 1, 2...)
-# For RTSP via MediaMTX: rtsp://host.docker.internal:8555/iphone_cam
-# Note: First publish HLS to MediaMTX or use direct HLS source proxy
-rtsp_url: "rtsp://host.docker.internal:8555/iphone_cam"
+# For RTSP via MediaMTX: rtsp://host.docker.internal:8554/test
+# For direct file: /app/test_videos/crowd_test.mp4
+rtsp_url: "rtsp://host.docker.internal:8554/test"
 backend_url: "http://core-backend:5000"
 
 # Camera identification
 tenant_id: "demo"
 site_id: "site-01"
-camera_id: "iphone_cam"
+camera_id: "cam-01"
 zone_id: "zone-01"
 
 # Processing settings

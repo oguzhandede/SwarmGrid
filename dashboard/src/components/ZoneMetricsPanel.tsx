@@ -55,12 +55,12 @@ export default function ZoneMetricsPanel({
     }, [demoMode, currentRisk]);
 
     // Use real data if available, otherwise use demo data
-    const density = currentRisk?.riskScore ?? (demoMode ? demoData.density : 0);
+    const density = currentRisk?.density ?? currentRisk?.riskScore ?? (demoMode ? demoData.density : 0);
     const riskLevel = currentRisk?.riskLevel ?? (demoMode ? demoData.riskLevel : RiskLevel.Green);
     const timestamp = currentRisk?.timestamp ? new Date(currentRisk.timestamp) : (demoMode ? demoData.timestamp : null);
 
-    // Calculate estimated person count from density
-    const estimatedPersonCount = Math.round(density * maxCapacity * 1.2);
+    // Use actual person count from YOLO if available, otherwise estimate from density
+    const personCount = currentRisk?.personCount ?? Math.round(density * maxCapacity);
 
     const getRiskLevelText = (level: RiskLevel) => {
         switch (level) {
@@ -134,7 +134,7 @@ export default function ZoneMetricsPanel({
                     <div className="metric-content">
                         <div className="metric-label">Tahmini Kişi</div>
                         <div className="metric-value">
-                            {estimatedPersonCount} <span className="metric-unit">/ {maxCapacity}</span>
+                            {personCount} <span className="metric-unit">/ {maxCapacity}</span>
                         </div>
                     </div>
                 </div>

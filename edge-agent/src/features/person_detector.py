@@ -11,7 +11,7 @@ from typing import List, Optional, Tuple
 import numpy as np
 
 try:
-    from ultralytics import YOLO
+    from ultralytics import YOLO  # type: ignore[reportPrivateImportUsage]
     YOLO_AVAILABLE = True
 except ImportError:
     YOLO_AVAILABLE = False
@@ -76,23 +76,29 @@ def point_in_polygon(x: float, y: float, polygon: List[Tuple[float, float]]) -> 
 
 class PersonDetector:
     """
-    YOLO-based person detector.
+    YOLO-based person detector optimized for crowded scenes.
     
-    Uses YOLOv8-nano for fast edge inference.
+    Uses YOLOv8-nano for fast edge inference with crowd-optimized settings.
     Falls back to motion-based detection if YOLO unavailable.
     """
     
     def __init__(
         self,
-        model_path: str = "yolov8n.pt",
-        confidence_threshold: float = 0.5,
-        device: str = "cpu"
+        model_path: str = "yolov8s.pt",  # Small model for better accuracy
+        confidence_threshold: float = 0.35,  # Balanced for accuracy
+        iou_threshold: float = 0.4,  # Standard IoU for person detection
+        device: str = "cpu",
+        img_size: int = 1280,  # Larger input for small person detection
+        max_det: int = 300  # Maximum detections
     ):
         self.confidence_threshold = confidence_threshold
+        self.iou_threshold = iou_threshold
+        self.img_size = img_size
+        self.max_det = max_det
         self.model = None
         self.device = device
         
-        if YOLO_AVAILABLE:
+        if YOLO_AVAILABLE and YOLO is not None:
             try:
                 logger.info(f"Loading YOLO model: {model_path}")
                 self.model = YOLO(model_path)
@@ -102,12 +108,17 @@ class PersonDetector:
         else:
             logger.warning("Ultralytics not installed, using fallback detection")
             
-    def detect(self, frame: np.ndarray) -> DetectionResult:
+    def detect(
+        self, 
+        frame: np.ndarray,
+        zone_polygon: Optional[List[Tuple[float, float]]] = None
+    ) -> DetectionResult:
         """
         Detect persons in frame.
         
         Args:
             frame: BGR image
+            zone_polygon: Optional polygon to filter detections
             
         Returns:
             DetectionResult with person count and bounding boxes
@@ -116,13 +127,17 @@ class PersonDetector:
             return self._fallback_detect(frame)
             
         try:
-            # Run YOLO detection
+            # Run YOLO detection with crowd-optimized settings
             results = self.model(
                 frame,
                 classes=[0],  # class 0 = person
                 conf=self.confidence_threshold,
+                iou=self.iou_threshold,
+                imgsz=self.img_size,
+                max_det=self.max_det,
                 verbose=False,
-                device=self.device
+                device=self.device,
+                agnostic_nms=True  # Class-agnostic NMS for better crowd detection
             )
             
             detections = []
@@ -131,14 +146,22 @@ class PersonDetector:
                     for box in r.boxes:
                         x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
                         conf = float(box.conf[0])
-                        detections.append(Detection(
+                        
+                        det = Detection(
                             x1=float(x1),
                             y1=float(y1),
                             x2=float(x2),
                             y2=float(y2),
                             confidence=conf
-                        ))
+                        )
                         
+                        # Filter by zone if provided
+                        if zone_polygon is None or det.is_in_zone(zone_polygon):
+                            detections.append(det)
+                        
+            # Apply additional filtering for small/invalid boxes
+            detections = self._filter_detections(detections, frame.shape)
+            
             # Create density map
             density_map = self._create_density_map(frame.shape[:2], detections)
             
@@ -151,6 +174,51 @@ class PersonDetector:
         except Exception as e:
             logger.error(f"YOLO detection error: {e}")
             return self._fallback_detect(frame)
+    
+    def _filter_detections(
+        self, 
+        detections: List[Detection],
+        frame_shape: Tuple[int, int, int]
+    ) -> List[Detection]:
+        """
+        Filter out invalid detections.
+        
+        Args:
+            detections: List of detections
+            frame_shape: Frame dimensions (H, W, C)
+            
+        Returns:
+            Filtered list of detections
+        """
+        h, w = frame_shape[:2]
+        min_area = (w * h) * 0.0001  # Minimum 0.01% of frame (very small persons)
+        max_area = (w * h) * 0.35    # Maximum 35% of frame
+        min_aspect_ratio = 0.15      # Width/Height ratio (allow wider boxes)
+        max_aspect_ratio = 2.5       # Allow taller boxes
+        
+        filtered = []
+        for det in detections:
+            area = det.area
+            width = det.x2 - det.x1
+            height = det.y2 - det.y1
+            
+            if height > 0:
+                aspect_ratio = width / height
+            else:
+                continue
+                
+            # Filter by area
+            if area < min_area or area > max_area:
+                continue
+                
+            # Filter by aspect ratio (persons are typically taller than wide)
+            if aspect_ratio < min_aspect_ratio or aspect_ratio > max_aspect_ratio:
+                continue
+                
+            # NOTE: Removed edge filtering - it was too aggressive for crowded scenes
+            filtered.append(det)
+            
+        return filtered
             
     def _fallback_detect(self, frame: np.ndarray) -> DetectionResult:
         """Fallback detection using motion analysis."""

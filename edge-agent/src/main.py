@@ -214,23 +214,33 @@ class EdgeAgent:
         
         if not zones_to_process:
             # No zones defined, process full frame
-            await self._extract_and_send(frame, None, self.settings.zone_id)
+            await self._extract_and_send(frame, None, None, self.settings.zone_id)
         else:
             # Process each zone
             for zone in zones_to_process:
                 frame_shape = (frame.shape[0], frame.shape[1])
                 zone_mask = zone.get_mask(frame_shape)
-                await self._extract_and_send(frame, zone_mask, zone.zone_id)
+                await self._extract_and_send(frame, zone_mask, zone, zone.zone_id)
                 
     async def _extract_and_send(
         self, 
         frame, 
-        zone_mask, 
+        zone_mask,
+        zone,  # Zone object or None
         zone_id: str
     ) -> None:
         """Extract features and send telemetry."""
-        # Extract features with zone mask
-        features = self.feature_builder.extract(frame, zone_mask)
+        # Get zone capacity and polygon for person filtering
+        zone_capacity = zone.max_capacity if zone else 100
+        zone_polygon = [(p[0], p[1]) for p in zone.polygon] if zone and zone.polygon else None
+        
+        # Extract features with zone mask and polygon
+        features = self.feature_builder.extract(
+            frame, 
+            zone_mask, 
+            zone_polygon=zone_polygon,
+            zone_capacity=zone_capacity
+        )
         
         # Update stream server with frame and metrics
         metrics = {}
@@ -248,7 +258,8 @@ class EdgeAgent:
                     speed_variance=features.speed_variance,
                     flow_entropy=features.flow_entropy,
                     alignment=features.alignment,
-                    bottleneck_index=features.bottleneck_index
+                    bottleneck_index=features.bottleneck_index,
+                    person_count=features.person_count
                 )
             
             metrics = {
@@ -256,6 +267,7 @@ class EdgeAgent:
                 'flow_entropy': features.flow_entropy,
                 'avg_speed': features.avg_speed,
                 'zone_id': zone_id,
+                'person_count': features.person_count,
                 'risk_level': 'Kritik' if features.density > 0.75 else (
                     'Dikkat' if features.density > 0.5 else 'Normal'
                 )

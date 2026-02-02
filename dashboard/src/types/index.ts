@@ -15,6 +15,8 @@ export interface RiskEvent {
   riskLevel: RiskLevel;
   suggestedActions: string[];
   acknowledged: boolean;
+  density?: number;
+  personCount?: number; // Actual person count from YOLO detection
 }
 
 export interface Telemetry {
@@ -29,6 +31,7 @@ export interface Telemetry {
   flowEntropy: number;
   alignment: number;
   bottleneckIndex: number;
+  personCount?: number; // Actual person count from YOLO detection
 }
 
 export interface Zone {

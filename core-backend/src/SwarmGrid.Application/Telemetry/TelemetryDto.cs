@@ -14,5 +14,6 @@ public record TelemetryDto(
     double SpeedVariance,
     double FlowEntropy,
     double Alignment,
-    double BottleneckIndex
+    double BottleneckIndex,
+    int PersonCount = 0 // Actual person count from YOLO detection
 );

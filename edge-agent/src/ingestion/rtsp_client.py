@@ -68,12 +68,15 @@ class RTSPClient:
             cap = cv2.VideoCapture(device_index)
         else:
             logger.info(f"Opening stream URL: {rtsp_url}")
-            cap = cv2.VideoCapture(rtsp_url)
+            # Use FFmpeg backend with TCP transport for better compatibility
+            cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
+            cap.set(cv2.CAP_PROP_OPEN_TIMEOUT_MSEC, 10000)  # 10 second timeout
+            cap.set(cv2.CAP_PROP_READ_TIMEOUT_MSEC, 10000)  # 10 second read timeout
         
         # Set capture properties
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.settings.frame_width)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.settings.frame_height)
-        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # Minimize latency
+        cap.set(cv2.CAP_PROP_BUFFERSIZE, 3)  # Small buffer for latency
         
         return cap
         

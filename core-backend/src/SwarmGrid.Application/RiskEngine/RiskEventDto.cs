@@ -15,5 +15,7 @@ public record RiskEventDto(
     double RiskScore,
     RiskLevel RiskLevel,
     List<string> SuggestedActions,
-    bool Acknowledged
+    bool Acknowledged,
+    double Density = 0,
+    int PersonCount = 0 // Actual person count from YOLO detection
 );
